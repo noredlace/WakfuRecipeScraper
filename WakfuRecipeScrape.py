@@ -13,90 +13,100 @@ import time
 with open('config.json','r') as read_file:
     data = json.load(read_file)
 
-#config variable settings
-Profession = data["Recipes"][0]["Profession"]
-BaseURL = data["Recipes"][0]["URL"]
-
 #Start Code
 try:
+
+    for d in data["Recipes"]:
+
+        Profession = d["Profession"]
+        BaseURL = d["URL"]
     
-    jsonList = []
-    driver = webdriver.Chrome()
+        jsonList = []
+        driver = webdriver.Chrome()
 
-    i = 1
+        i = 1
 
-    while(i<40):
-        ##We want to continuously access each incremental page until get the message that we don't have recipes anymore https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/77-armorer/recipes?page=36
-        url = BaseURL + "?page=" + str(i)
+        #hardcoded for now, need to dynamically check this
+        while(i<100):
+            ##We want to continuously access each incremental page until get the message that we don't have recipes anymore https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/77-armorer/recipes?page=36
+            url = BaseURL + "?page=" + str(i)
 
-        
-        driver.get(url)
+            
+            driver.get(url)
 
-        ##Check for Page with No Items and Exit
-        ##There is probably some cleaner way to do this in Selenium than doing a Try/Catch block for this
-        try:
-            hasRecipes = driver.find_elements_by_xpath("//div[@id='tab1']//div[@class='ak-panel-content']")
-            ##hasRecipes = driver.find_elements(By.XPATH,"//div[@id='tab1']//div[@class='ak-panel-content']")
-            print(hasRecipes.text)
-            print("No More Recipes found at " + url)
+            ##Check for Page with No Items and Exit
+            ##There is probably some cleaner way to do this in Selenium than doing a Try/Catch block for this
+            '''
+            try:
+                hasRecipes = driver.find_elements_by_xpath("//div[@id='tab1']//div[@class='ak-panel-content']")
+                ##hasRecipes = driver.find_elements(By.XPATH,"//div[@id='tab1']//div[@class='ak-panel-content']")
+                print(hasRecipes.text)
+                print("No More Recipes found at " + url)
 
-            driver.close()
+                driver.close()
 
-            ##If we are at the end, dump our jsonList of all recipes to the Json File named after the Profession
-            fileName = Profession + "Recipes.json"
-            f = open(fileName,"w")
-            f.write(json.dumps(jsonList))
-            f.close()
+                ##If we are at the end, dump our jsonList of all recipes to the Json File named after the Profession
+                fileName = Profession + "Recipes.json"
+                f = open(fileName,"w")
+                f.write(json.dumps(jsonList))
+                f.close()
 
-            ##break out of our Loop and end the script
-            break
-        except:
-            print("Recipes found at " + url)
-        
-        for el in driver.find_elements_by_xpath("//tr[@class='ak-bg-odd' or @class='ak-bg-even']"):
-            Item = {}
+                ##break out of our Loop and end the script
+                break
+            except:
+                print("Recipes found at " + url)
+            '''
+            
+            for el in driver.find_elements_by_xpath("//tr[@class='ak-bg-odd' or @class='ak-bg-even']"):
+                Item = {}
 
-            urlID = el.find_element_by_xpath(".//td[@class='img-first-column']//a").get_attribute("href")
-            Item["urlID"] = urlID
-
-            urlImage = el.find_element_by_xpath(".//td[@class='img-first-column']//a//img").get_attribute("src")
-            Item["urlImage"] = urlImage
-
-            name = el.find_element_by_xpath(".//td[2]").text
-            Item["Name"] = name
-
-            type = el.find_element_by_xpath(".//td[3]").text
-            Item["Type"] = type
-
-            recipeList = []
-            for child in el.find_elements_by_xpath(".//td[4]//a"):
-                childUrlID = child.get_attribute("href")
-
-                childUrlImage = child.find_element_by_xpath(".//img").get_attribute("src")
+                urlID = el.find_element_by_xpath(".//td[@class='img-first-column']//a").get_attribute("href")
+                Item["urlID"] = urlID
                 
-                childQty = child.text
+                urlArray = urlID.split('/')
+                urlArray.reverse()
+                itemIDAndName = urlArray[0].split('-')
+                itemID = itemIDAndName[0]
+                Item["ItemID"] = itemID
 
-                recipeList.append({"urlID": childUrlID, "urlImage": childUrlImage, "qty": childQty})
+                urlImage = el.find_element_by_xpath(".//td[@class='img-first-column']//a//img").get_attribute("src")
+                Item["urlImage"] = urlImage
 
-            Item["Recipe"] = recipeList
+                name = el.find_element_by_xpath(".//td[2]").text
+                Item["Name"] = name
 
-            level = el.find_element_by_xpath(".//td[5]").text
-            Item["Level"] = level
+                type = el.find_element_by_xpath(".//td[3]").text
+                Item["Type"] = type
 
-            jsonList.append(Item)
+                recipeList = []
+                for child in el.find_elements_by_xpath(".//td[4]//a"):
+                    childUrlID = child.get_attribute("href")
 
-        time.sleep(2)
+                    childUrlImage = child.find_element_by_xpath(".//img").get_attribute("src")
+                    
+                    childQty = child.text
 
-        ##increment to the next page
-        i = i + 1
+                    recipeList.append({"urlID": childUrlID, "urlImage": childUrlImage, "qty": childQty})
 
-    driver.close()
+                Item["Recipe"] = recipeList
 
-    ##If we are at the end, dump our jsonList of all recipes to the Json File named after the Profession
-    fileName = Profession + "Recipes.json"
-    f = open(fileName,"w")
-    f.write(json.dumps(jsonList))
-    f.close()
+                level = el.find_element_by_xpath(".//td[5]").text
+                Item["Level"] = level
+
+                jsonList.append(Item)
+
+            time.sleep(2)
+
+            ##increment to the next page
+            i = i + 1
+
+        driver.close()
+
+        ##If we are at the end, dump our jsonList of all recipes to the Json File named after the Profession
+        fileName = "Recipes\\" + Profession + "Recipes.json"
+        f = open(fileName,"w")
+        f.write(json.dumps(jsonList))
+        f.close()
 
 
 except:

@@ -3,6 +3,58 @@
     {
       "Profession": "Armorer",
       "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/77-armorer/recipes"
+    },
+    {
+      "Profession": "Baker",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/40-baker/recipes"
+    },
+    {
+      "Profession": "Chef",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/76-chef/recipes"
+    },
+    {
+      "Profession": "Handyman",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/81-handyman/recipes"
+    },
+    {
+      "Profession": "Jeweler",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/78-jeweler/recipes"
+    },
+    {
+      "Profession": "LeatherDealer",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/80-leather-dealer/recipes"
+    },
+    {
+      "Profession": "Tailor",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/79-tailor/recipes"
+    },
+    {
+      "Profession": "WeaponsMaster",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/83-weapons-master/recipes"
+    },
+    {
+      "Profession": "Farmer",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/64-farmer/recipes"
+    },
+    {
+      "Profession": "Fisherman",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/75-fisherman/recipes"
+    },
+    {
+      "Profession": "Herbalist",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/72-herbalist/recipes"
+    },
+    {
+      "Profession": "Lumberjack",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/71-lumberjack/recipes"
+    },
+    {
+      "Profession": "Miner",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/73-miner/recipes"
+    },
+    {
+      "Profession": "Trapper",
+      "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/74-trapper/recipes"
     }
   ]
 }

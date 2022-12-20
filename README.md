@@ -9,9 +9,10 @@ i.e. provide the URL  https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/77-armor
 We then parse the Tables on the Site to extract the information for recipes
 
 The json structure is an array of objects like so
-
+```
 [{
     "urlID": "/en/mmorpg/encyclopedia/resources/18785-coarse-plate",
+    "itemID": "18785"
     "urlImage": "https://static.ankama.com/wakfu/portal/game/item/42/57518785.w40h40.png",
     "name": "Coarse Plate",
     "type": "Armorer Components",
@@ -29,13 +30,13 @@ The json structure is an array of objects like so
     ],
     "level": "0"
   }]
-
+```
 We store these as JSON files for the respective professions and can be referenced by other programs
 
 Python Dependencies
+```
+pip install selenium
+```
+Get the chromedriver.exe off selenium's Wiki for drivers
 
-python -m pip install requests
-
-python -m pip install bs4
-
-python -m pip install cookiejar
+Add the chromedriver.exe folder to your path
