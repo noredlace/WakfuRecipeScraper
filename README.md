@@ -55,4 +55,4 @@ Get the chromedriver.exe off selenium's Wiki for drivers
 Add the chromedriver.exe folder to your path
 
 ## Angular Site
-[Github Repo](https://github.com/noredlace/wakfu-recipe-calculator)
+See the Angular Site using these at [Github Repo](https://github.com/noredlace/wakfu-recipe-calculator)
