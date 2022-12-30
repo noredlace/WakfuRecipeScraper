@@ -10,33 +10,49 @@ We then parse the Tables on the Site to extract the information for recipes
 
 The json structure is an array of objects like so
 ```
-[{
-    "urlID": "/en/mmorpg/encyclopedia/resources/18785-coarse-plate",
-    "itemID": "18785"
-    "urlImage": "https://static.ankama.com/wakfu/portal/game/item/42/57518785.w40h40.png",
-    "name": "Coarse Plate",
-    "type": "Armorer Components",
-    "recipes": [
-      {
-        "quantity": " x5",
-        "urlID": "/en/mmorpg/encyclopedia/resources/1846-iron-ore",
-        "urlImage": "https://static.ankama.com/wakfu/portal/game/item/21/3011846.png"
-      },
-      {
-        "quantity": " x5",
-        "urlID": "/en/mmorpg/encyclopedia/resources/1846-iron-ore",
-        "urlImage": "https://static.ankama.com/wakfu/portal/game/item/21/3011846.png"
-      }
-    ],
-    "level": "0"
-  }]
+[
+    {
+        "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia/consumables/10374-howin-treat",
+        "ItemID": 10374,
+        "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/42/26610374.w40h40.png",
+        "Name": "Al Howin's Treat",
+        "Type": "Food",
+        "Recipe": [
+            {
+                "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia//-",
+                "ItemID": -1,
+                "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/21/.png",
+                "Name": "",
+                "Quantity": 1
+            },
+            {
+                "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia/resources/2340-bucket-o-water",
+                "ItemID": 2340,
+                "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/21/2632340.png",
+                "Name": "Bucket O Water",
+                "Quantity": 1
+            },
+            {
+                "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia/resources/10375-piece-pumpkwin",
+                "ItemID": 10375,
+                "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/21/26010375.png",
+                "Name": "Piece Pumpkwin",
+                "Quantity": 1
+            }
+        ],
+        "Level": 0
+    }
+]
 ```
 We store these as JSON files for the respective professions and can be referenced by other programs
 
-Python Dependencies
+## Python Dependencies
 ```
 pip install selenium
 ```
 Get the chromedriver.exe off selenium's Wiki for drivers
 
 Add the chromedriver.exe folder to your path
+
+## Angular Site
+[Github Repo](https://github.com/noredlace/wakfu-recipe-calculator)
