@@ -13,10 +13,14 @@ import time
 with open('config.json','r') as read_file:
     data = json.load(read_file)
 
-##data = {"Recipes": [{"Profession": "Armorer", "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/77-armorer/recipes"}]}
+##data = {"Recipes": [{"Profession": "Lumberjack", "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/71-lumberjack/recipes"}]}
 
 #Start Code
 try:
+
+    ##Any unknown child recipe IDs should default to a negative number. decrement the number each time its used to keep the ID unique 
+    ##This is typical of Recipes they have where it is not craftable anymore/special event but they still have it on the site
+    unknownChildID = -1
 
     for d in data["Recipes"]:
 
@@ -44,7 +48,7 @@ try:
             print(url)
 
             ##Wait 10 seconds incase cloudflare redirect comes up. probably better way to do this
-            time.sleep(10)
+            ##time.sleep(10)
 
             ##Check for Page with No Items and Exit
             ##If element that holds "This profession does not have harvests." exists. exit the loop and continue to the next profession recipes
@@ -104,7 +108,8 @@ try:
                     try:
                         Item["ItemID"] = int(itemID)
                     except:
-                        Item["ItemID"] = -1
+                        Item["ItemID"] = unknownChildID
+                        unknownChildID -= 1
 
                     urlImage = el.find_element_by_xpath(".//td[@class='img-first-column']//a//img").get_attribute("src")
                     Item["ItemImageURL"] = urlImage
@@ -125,20 +130,29 @@ try:
 
                         if len(childItemIDAndNameArray) > 0:
                             childID = childItemIDAndNameArray[0]
-                        
-                            childName = ""
-                            for childElement in range (1, len(childItemIDAndNameArray)):
-                                childName = childName + ' ' + childItemIDAndNameArray[childElement].capitalize()
-                        
-                            childName = childName.strip()
+
+                            if (childID.strip() == ''):
+                                childID = unknownChildID
+                                unknownChildID -= 1
+                                childName = "Unknown(" + str(unknownChildID) + ")"
+                            else: 
+                                childName = ""
+                                for childElement in range (1, len(childItemIDAndNameArray)):
+                                    childName = childName + ' ' + childItemIDAndNameArray[childElement].capitalize()
+                            
+                                childName = childName.strip()
                         else:
-                            childID = "-1"
-                            childName = "Unknown"
+                            childID = unknownChildID
+                            unknownChildID -= 1
+                            childName = "Unknown(" + str(unknownChildID) + ")"
 
                         childUrlImage = child.find_element_by_xpath(".//img").get_attribute("src")
                         
                         ##Ankama has the Display Text as "x23". Strip out the X
-                        childQty = (child.text).replace("x","")
+                        ##They also have some expander pages that prevents me from getting it without doing this odd innerHTML array
+                        childQtyArray = child.get_attribute("innerHTML").split(' ')
+                        childQtyArray.reverse()
+                        childQty = (childQtyArray[0]).replace("x","").strip()
 
                         recipeList.append({"ItemURL": childUrlID, "ItemID": int(childID), "ItemImageURL": childUrlImage, "Name": childName, "Quantity": int(childQty)})
 
@@ -146,10 +160,10 @@ try:
                     Item["Recipe"] = recipeList
 
                     try:
-                        level = el.find_element_by_xpath(".//td[5]").text
+                        level = (el.find_element_by_xpath(".//td[5]")).get_attribute("innerHTML")
                         Item["Level"] = int(level)
                     except:
-                        Item["Level"] = 0
+                        Item["Level"] = -1
                     jsonList.append(Item)
             except:
                 print("Error of Recipes found at " + url)
@@ -161,7 +175,7 @@ try:
         driver.close()
 
         ##If we are at the end, dump our jsonList of all recipes to the Json File named after the Profession
-        fileName = "Recipes\\" + Profession + "Recipes.json"
+        fileName = "Recipes\\" + Profession + ".json"
         f = open(fileName,"w")
         f.write(json.dumps(jsonList))
         f.close()
