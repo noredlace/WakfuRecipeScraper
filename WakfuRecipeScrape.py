@@ -13,8 +13,7 @@ import time
 with open('config.json','r') as read_file:
     data = json.load(read_file)
 
-
-##data = {"Recipes": [{"Profession": "Jeweler", "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/78-jeweler/recipes"}]}
+##data = {"Recipes": [{"Profession": "Armorer", "URL": "https://www.wakfu.com/en/mmorpg/encyclopedia/jobs/77-armorer/recipes"}]}
 
 #Start Code
 try:
@@ -55,40 +54,60 @@ try:
                 break
 
             '''
-            try:
-                hasRecipes = driver.find_elements_by_xpath("//div[@id='tab1']//div[@class='ak-panel-content']")
-                ##hasRecipes = driver.find_elements(By.XPATH,"//div[@id='tab1']//div[@class='ak-panel-content']")
-                print(hasRecipes.text)
-                print("No More Recipes found at " + url)
-
-                driver.close()
-
-                ##If we are at the end, dump our jsonList of all recipes to the Json File named after the Profession
-                fileName = Profession + "Recipes.json"
-                f = open(fileName,"w")
-                f.write(json.dumps(jsonList))
-                f.close()
-
-                ##break out of our Loop and end the script
-                break
-            except:
-                print("Recipes found at " + url)
+            Sample Json Array (ItemID of -1 means we couldn't find anything)
+            [
+                {
+                    "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia/consumables/10374-howin-treat",
+                    "ItemID": 10374,
+                    "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/42/26610374.w40h40.png",
+                    "Name": "Al Howin's Treat",
+                    "Type": "Food",
+                    "Recipe": [
+                        {
+                            "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia//-",
+                            "ItemID": -1,
+                            "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/21/.png",
+                            "Name": "",
+                            "Quantity": 1
+                        },
+                        {
+                            "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia/resources/2340-bucket-o-water",
+                            "ItemID": 2340,
+                            "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/21/2632340.png",
+                            "Name": "Bucket O Water",
+                            "Quantity": 1
+                        },
+                        {
+                            "ItemURL": "https://www.wakfu.com/en/mmorpg/encyclopedia/resources/10375-piece-pumpkwin",
+                            "ItemID": 10375,
+                            "ItemImageURL": "https://static.ankama.com/wakfu/portal/game/item/21/26010375.png",
+                            "Name": "Piece Pumpkwin",
+                            "Quantity": 1
+                        }
+                    ],
+                    "Level": 0
+                }
+            ]
             '''
+
             try:
                 for el in driver.find_elements_by_xpath("//tr[@class='ak-bg-odd' or @class='ak-bg-even']"):
                     Item = {}
 
                     urlID = el.find_element_by_xpath(".//td[@class='img-first-column']//a").get_attribute("href")
-                    Item["urlID"] = urlID
+                    Item["ItemURL"] = urlID
                     
                     urlArray = urlID.split('/')
                     urlArray.reverse()
                     itemIDAndName = urlArray[0].split('-')
                     itemID = itemIDAndName[0]
-                    Item["ItemID"] = itemID
+                    try:
+                        Item["ItemID"] = int(itemID)
+                    except:
+                        Item["ItemID"] = -1
 
                     urlImage = el.find_element_by_xpath(".//td[@class='img-first-column']//a//img").get_attribute("src")
-                    Item["urlImage"] = urlImage
+                    Item["ItemImageURL"] = urlImage
 
                     name = el.find_element_by_xpath(".//td[2]").text
                     Item["Name"] = name
@@ -100,23 +119,40 @@ try:
                     for child in el.find_elements_by_xpath(".//td[4]//a"):
                         childUrlID = child.get_attribute("href")
 
+                        childUrlIDArray = childUrlID.split('/')
+                        childUrlIDArray.reverse()
+                        childItemIDAndNameArray = childUrlIDArray[0].split('-')
+
+                        if len(childItemIDAndNameArray) > 0:
+                            childID = childItemIDAndNameArray[0]
+                        
+                            childName = ""
+                            for childElement in range (1, len(childItemIDAndNameArray)):
+                                childName = childName + ' ' + childItemIDAndNameArray[childElement].capitalize()
+                        
+                            childName = childName.strip()
+                        else:
+                            childID = "-1"
+                            childName = "Unknown"
+
                         childUrlImage = child.find_element_by_xpath(".//img").get_attribute("src")
                         
-                        childQty = child.text
+                        ##Ankama has the Display Text as "x23". Strip out the X
+                        childQty = (child.text).replace("x","")
 
-                        recipeList.append({"urlID": childUrlID, "urlImage": childUrlImage, "qty": childQty})
+                        recipeList.append({"ItemURL": childUrlID, "ItemID": int(childID), "ItemImageURL": childUrlImage, "Name": childName, "Quantity": int(childQty)})
 
 
                     Item["Recipe"] = recipeList
 
                     try:
                         level = el.find_element_by_xpath(".//td[5]").text
-                        Item["Level"] = level
+                        Item["Level"] = int(level)
                     except:
-                        Item["Level"] = "NULL"
+                        Item["Level"] = 0
                     jsonList.append(Item)
             except:
-                print("No Recipes found at " + url)
+                print("Error of Recipes found at " + url)
             ##time.sleep(2)
 
             ##increment to the next page
@@ -130,10 +166,5 @@ try:
         f.write(json.dumps(jsonList))
         f.close()
 
-
 except:
     print("Unexpected Error:", sys.exc_info()[0])
-
-        
-
-    
